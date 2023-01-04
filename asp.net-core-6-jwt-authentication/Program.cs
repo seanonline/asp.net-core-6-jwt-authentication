@@ -1,3 +1,7 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
 namespace asp.net_core_6_jwt_authentication
 {
     public class Program
@@ -13,17 +17,52 @@ namespace asp.net_core_6_jwt_authentication
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Add JWT Authentication Middleware - This code will intercept HTTP request and validate the JWT.
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
+                opt => {
+                    opt.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+                        .GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                }
+              );
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
+                app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
 
-            app.UseHttpsRedirection();
 
+            app.UseCors(policy =>
+            policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            );
+
+            app.UseHttpsRedirection();
+           
+            //https://referbruv.com/blog/building-custom-responses-for-unauthorized-requests-in-aspnet-core/
+            app.Use(async (context, next) =>
+            {
+                await next();
+
+                if (context.Response.StatusCode == (int)System.Net.HttpStatusCode.Unauthorized)
+                {
+                    await context.Response.WriteAsync("Token Validation Has Failed. Request Access Denied");
+                }
+            });
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
 
