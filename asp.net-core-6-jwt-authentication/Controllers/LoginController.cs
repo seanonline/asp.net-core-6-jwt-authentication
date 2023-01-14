@@ -7,6 +7,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using asp.net_core_6_jwt_authentication.Models;
+using asp.net_core_6_jwt_authentication.Service;
 
 namespace asp.net_core_6_jwt_authentication.Controllers
 {
@@ -15,21 +16,19 @@ namespace asp.net_core_6_jwt_authentication.Controllers
     public class LoginController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly IUserInterface userService;
 
-        public LoginController(IConfiguration configuration)
+        public LoginController(IUserInterface _userService,IConfiguration configuration)
         {
+            this.userService = _userService;
             _configuration = configuration;
         }
 
         [HttpPost("login")]
         public ActionResult<object> Authenticate([FromBody] LoginRequest login)
         {
-            var loginResponse = new LoginResponse { };
-            LoginRequest loginrequest = new()
-            {
-                UserName = login.UserName.ToLower(),
-                Password = login.Password
-            };
+            var loginResponse = new LoginResponse(string.Empty,string.Empty,string.Empty) { } ;
+            LoginRequest loginrequest = login;
 
             bool isUsernamePasswordValid = false;
 
@@ -44,10 +43,11 @@ namespace asp.net_core_6_jwt_authentication.Controllers
                 string token = CreateToken(loginrequest.UserName);
 
                 loginResponse.Token = token;
-                loginResponse.responseMsg = new HttpResponseMessage()
-                {
-                    StatusCode = HttpStatusCode.OK
-                };
+              
+                loginResponse.RefreshToken = "xxxxxxtestRefreshToken";
+                loginResponse.UserId = loginrequest.UserName;
+
+                this.userService.RecordUserLogin(loginResponse);
 
                 //return the token
                 return Ok(new { loginResponse });

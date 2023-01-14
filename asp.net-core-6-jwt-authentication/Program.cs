@@ -1,4 +1,6 @@
+using asp.net_core_6_jwt_authentication.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
@@ -17,6 +19,15 @@ namespace asp.net_core_6_jwt_authentication
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+
+            #region DBContext
+            
+            builder.Services.AddDbContext<AppDbContext>(options =>
+                options.UseInMemoryDatabase("NotesAppInMemDb")
+            );
+            
+            #endregion
+
             // Add JWT Authentication Middleware - This code will intercept HTTP request and validate the JWT.
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
                 opt => {
@@ -30,6 +41,8 @@ namespace asp.net_core_6_jwt_authentication
                     };
                 }
               );
+
+            builder.Services.AddScoped<IUserInterface, UserService>();
 
             var app = builder.Build();
 
