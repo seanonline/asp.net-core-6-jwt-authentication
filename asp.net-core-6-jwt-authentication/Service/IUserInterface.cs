@@ -7,5 +7,10 @@ namespace asp.net_core_6_jwt_authentication.Service
         void RecordUserLogin(LoginResponse user);
 
         LoginResponse? GetUser(string email);
-    }
+
+        public RefreshToken? GetRefreshTokenDetail(string email);
+
+        public void RemoveRefreshToken(string username, string refreshToken);
+        
+     }
 }

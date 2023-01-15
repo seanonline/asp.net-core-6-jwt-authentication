@@ -13,6 +13,7 @@ namespace asp.net_core_6_jwt_authentication
 
 
         public DbSet<LoginResponse> Users { get; set; }
+        public DbSet<RefreshToken> RefreshToken { get; set; }
 
 
         public override int SaveChanges()

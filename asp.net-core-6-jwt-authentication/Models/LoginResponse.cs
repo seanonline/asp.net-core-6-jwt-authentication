@@ -1,19 +1,18 @@
 ﻿namespace asp.net_core_6_jwt_authentication.Models
 {
-    public class LoginResponse:BaseModel
+    public class LoginResponse : BaseModel
     { 
-        public LoginResponse(string UserId,string Token,String RefreshToken)
+        public LoginResponse(string UserId, string Token, DateTime accessTokenExpiry)
         {
             this.Token = Token;
-            this.RefreshToken = RefreshToken;
-            this.UserId= UserId;
+            this.UserId = UserId;
+            AccessTokenExpiry = accessTokenExpiry;  
         }
 
         public string UserId { get; set; }
         public string Token { get; set; }
-        public string RefreshToken { get; set; }
-
-        //HttpResponseMessage can not be initialzed by entity framework automatically.
+        public DateTime AccessTokenExpiry { get; set; }
+        public RefreshToken RefreshToken { get; set; }     
 
     }
 
