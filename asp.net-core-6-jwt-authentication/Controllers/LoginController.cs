@@ -105,6 +105,15 @@ namespace asp.net_core_6_jwt_authentication.Controllers
 
         }
 
+
+        [HttpPost("revoke")]
+        public IActionResult RevokeToken([FromBody] LoginRequest resource)
+        {
+            this.userService.RemoveRefreshToken(resource.UserName, resource.RefreshToken);
+            return NoContent();
+        }
+
+
         private string CreateToken(string username)
         {
 
@@ -128,7 +137,6 @@ namespace asp.net_core_6_jwt_authentication.Controllers
         }
 
         // Refresh Token Creation
-
         private RefreshToken CreateRefreshToken(string id)
         {
             var refreshToken = new RefreshToken
