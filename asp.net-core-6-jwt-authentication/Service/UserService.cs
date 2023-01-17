@@ -12,6 +12,7 @@ namespace asp.net_core_6_jwt_authentication.Service
             this.context= context;        
         }
 
+        // record the user login+accesstoken+refresh token 
         public void RecordUserLogin(LoginResponse user)
         {
             var existingUser = GetUser(user.UserId);
@@ -36,16 +37,19 @@ namespace asp.net_core_6_jwt_authentication.Service
             this.context.SaveChanges();
         }
 
+        // get User detail
         public LoginResponse? GetUser(string email)
         {
             return this.context.Users.SingleOrDefault(x => x.UserId == email);
         }
 
+        // Return a refresh token detail for a user
         public RefreshToken? GetRefreshTokenDetail(string email)
         {
             return this.context.RefreshToken.SingleOrDefault(x => x.Username == email);
         }
 
+        // Remove refresh token from the database
         public void RemoveRefreshToken(string username,string refreshToken) {
 
             var entity = GetRefreshTokenDetail(username);

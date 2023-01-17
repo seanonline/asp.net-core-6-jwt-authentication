@@ -27,7 +27,7 @@ namespace asp.net_core_6_jwt_authentication.Controllers
         [HttpPost("login")]
         public ActionResult<object> Authenticate([FromBody] LoginRequest login)
         {
-            var loginResponse = new LoginResponse(string.Empty,string.Empty,DateTime.UtcNow) { } ;
+            var loginResponse = new LoginResponse(string.Empty,string.Empty, DateTime.Now) { } ;
             LoginRequest loginrequest = login;
 
             bool isUsernamePasswordValid = false;
@@ -44,7 +44,7 @@ namespace asp.net_core_6_jwt_authentication.Controllers
 
                 loginResponse.Token = token;
 
-                loginResponse.RefreshToken = new RefreshToken(string.Empty, string.Empty, DateTime.UtcNow,string.Empty);
+                loginResponse.RefreshToken = new RefreshToken(string.Empty, string.Empty, DateTime.Now, string.Empty);
 
 
                 loginResponse.RefreshToken = CreateRefreshToken(loginrequest.UserName);
