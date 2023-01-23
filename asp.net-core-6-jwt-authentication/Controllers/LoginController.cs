@@ -73,7 +73,8 @@ namespace asp.net_core_6_jwt_authentication.Controllers
 
             if (user == null) { return BadRequest(); }
             if (refreshtoken == null) { return BadRequest(); }
-            if (user.Token != refreshTokenResource.Token) { return BadRequest("Not a Valid Access Token"); };
+            if (user.Token != refreshTokenResource.Token) { return BadRequest("Not a Valid Access Token"); };           
+
 
             if (refreshtoken.Expiration < DateTime.Now) {
 
@@ -81,8 +82,11 @@ namespace asp.net_core_6_jwt_authentication.Controllers
                 return BadRequest("Refresh Token Expired. Please Login again"); 
             };
 
+            //Finally if refresh token is not expired check if it is valid 
+            if (refreshtoken.Token != refreshTokenResource.RefreshToken) { return BadRequest("Not a Valid Refresh Token"); };
+
             //Update the user access token + refresh token
-             
+
             var loginResponse = new LoginResponse(string.Empty, string.Empty, DateTime.UtcNow) { };
 
             string token = CreateToken(refreshTokenResource.UserName);
